@@ -17,6 +17,7 @@
 #include "LabelUpgrades.h"
 #include "WChanger.h"
 #include "DisplayManager.h"
+#include "Timer.h"
 
 #define screenWidth   480
 #define screenHeight  320
@@ -32,6 +33,7 @@ const String weatherURL = "https://api.open-meteo.com/v1/forecast?latitude=50.00
 DHT dht(DHTPIN, DHTTYPE);
 LGFX tft;
 
+inline Timer myTimer;
 DisplayManager displayMgr(&tft, ui_Screen1, 120000);
 
 static lv_disp_draw_buf_t draw_buf;
@@ -54,6 +56,11 @@ void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
 /* Функция чтения касаний тачскрина */
 void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 {
+    if (myTimer.isActive() && !lv_obj_has_flag(ui_PanelTimer, LV_OBJ_FLAG_HIDDEN))
+    {
+        lv_disp_trig_activity(NULL);
+    }
+
     uint16_t touchX, touchY;
 
     tft.waitDMA();
@@ -105,6 +112,7 @@ void lvgl_init()
     indev_drv.read_cb = my_touchpad_read;
     lv_indev_drv_register(&indev_drv);
 }
+
 void setup()
 {
     Serial.begin(115200);
@@ -133,6 +141,7 @@ void setup()
   
     Serial.println("Setup done");
 }
+
 
 void update_clock() {
     static uint32_t last_check_Time  = 0;
@@ -309,8 +318,12 @@ void loop()
 {
     lv_timer_handler(); 
     update_clock();
-    // getForecastData();
+    getForecastData();
     getHomeTempData();
     displayMgr.update();
+    myTimer.tick();
+
+    static UpgradeLabel LabelTimerData(ui_LabelTimerData);
+    LabelTimerData.update(myTimer.getRemaining());
     delay(5);
 }

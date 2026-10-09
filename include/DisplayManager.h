@@ -47,7 +47,7 @@ class DisplayManager
             if (!sleep) return;
 
             gfx->wakeup();
-            delay(100);
+            delay(300);
             gfx->setBrightness(brightness);
             lv_disp_trig_activity(NULL);
 

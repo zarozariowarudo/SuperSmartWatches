@@ -5,6 +5,16 @@
 
 #include "ui.h"
 
+lv_obj_t * uic_ButtonExitTimer;
+lv_obj_t * uic_LabelReset;
+lv_obj_t * uic_ButtonReset;
+lv_obj_t * uic_LabelStart;
+lv_obj_t * uic_ButtonStart;
+lv_obj_t * uic_ButtonMinus;
+lv_obj_t * uic_ButtonPlus;
+lv_obj_t * uic_LabelTimerData;
+lv_obj_t * uic_PanelTimer;
+lv_obj_t * uic_PanelTimerPage;
 lv_obj_t * uic_LabelExit1;
 lv_obj_t * uic_ButtonExit;
 lv_obj_t * uic_In3DaysCloudIcon;
@@ -44,21 +54,25 @@ lv_obj_t * uic_LabelTemp;
 lv_obj_t * uic_InternetTitle;
 lv_obj_t * uic_PanelInternet;
 lv_obj_t * uic_PanelTherm;
+lv_obj_t * uic_TimerIcon;
+lv_obj_t * uic_ButtonTimer;
+lv_obj_t * uic_TimeLabel;
 lv_obj_t * uic_ForecastIcon;
 lv_obj_t * uic_ButtonForecast;
 lv_obj_t * uic_ThermometherIcon;
 lv_obj_t * uic_ButtonThermomether;
 lv_obj_t * uic_Line;
-lv_obj_t * uic_TimeLabel;
 lv_obj_t * uic_PanelMain;
 lv_obj_t * ui_Screen1 = NULL;
 lv_obj_t * ui_PanelMain = NULL;
-lv_obj_t * ui_TimeLabel = NULL;
 lv_obj_t * ui_Line = NULL;
 lv_obj_t * ui_ButtonThermomether = NULL;
 lv_obj_t * ui_ThermometherIcon = NULL;
 lv_obj_t * ui_ButtonForecast = NULL;
 lv_obj_t * ui_ForecastIcon = NULL;
+lv_obj_t * ui_TimeLabel = NULL;
+lv_obj_t * ui_ButtonTimer = NULL;
+lv_obj_t * ui_TimerIcon = NULL;
 lv_obj_t * ui_PanelTherm = NULL;
 lv_obj_t * ui_PanelInternet = NULL;
 lv_obj_t * ui_InternetTitle = NULL;
@@ -104,6 +118,21 @@ lv_obj_t * ui_In3DaysSunIcon = NULL;
 lv_obj_t * ui_In3DaysCloudIcon = NULL;
 lv_obj_t * ui_ButtonExit = NULL;
 lv_obj_t * ui_LabelExit1 = NULL;
+lv_obj_t * ui_PanelTimerPage = NULL;
+lv_obj_t * ui_LabelHeader1 = NULL;
+lv_obj_t * ui_PanelTimer = NULL;
+lv_obj_t * ui_LabelTimerData = NULL;
+lv_obj_t * ui_ButtonPlus = NULL;
+lv_obj_t * ui_Panel3 = NULL;
+lv_obj_t * ui_Panel2 = NULL;
+lv_obj_t * ui_ButtonMinus = NULL;
+lv_obj_t * ui_Panel4 = NULL;
+lv_obj_t * ui_ButtonStart = NULL;
+lv_obj_t * ui_LabelStart = NULL;
+lv_obj_t * ui_ButtonReset = NULL;
+lv_obj_t * ui_LabelReset = NULL;
+lv_obj_t * ui_ButtonExitTimer = NULL;
+lv_obj_t * ui_LabelExit2 = NULL;
 // event funtions
 void ui_event_ButtonThermomether(lv_event_t * e)
 {
@@ -121,6 +150,16 @@ void ui_event_ButtonForecast(lv_event_t * e)
 
     if(event_code == LV_EVENT_CLICKED) {
         _ui_flag_modify(ui_PanelForecast, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
+        _ui_flag_modify(ui_PanelMain, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+    }
+}
+
+void ui_event_ButtonTimer(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_flag_modify(ui_PanelTimerPage, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
         _ui_flag_modify(ui_PanelMain, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
     }
 }
@@ -145,6 +184,52 @@ void ui_event_ButtonExit(lv_event_t * e)
     }
 }
 
+void ui_event_ButtonPlus(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        addMinute(e);
+    }
+}
+
+void ui_event_ButtonMinus(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        minusMinute(e);
+    }
+}
+
+void ui_event_ButtonStart(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        startTimer(e);
+    }
+}
+
+void ui_event_ButtonReset(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        resetTimer(e);
+    }
+}
+
+void ui_event_ButtonExitTimer(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_flag_modify(ui_PanelMain, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
+        _ui_flag_modify(ui_PanelTimerPage, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+    }
+}
+
 // build funtions
 
 void ui_Screen1_screen_init(void)
@@ -163,18 +248,6 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_style_bg_color(ui_PanelMain, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_PanelMain, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_PanelMain, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    ui_TimeLabel = lv_label_create(ui_PanelMain);
-    lv_obj_set_width(ui_TimeLabel, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_TimeLabel, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_TimeLabel, 0);
-    lv_obj_set_y(ui_TimeLabel, -100);
-    lv_obj_set_align(ui_TimeLabel, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_TimeLabel, "--:--");
-    lv_obj_set_style_text_color(ui_TimeLabel, lv_color_hex(0x01BA11), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_TimeLabel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_align(ui_TimeLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_TimeLabel, &lv_font_montserrat_48, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Line = lv_obj_create(ui_PanelMain);
     lv_obj_set_width(ui_Line, 480);
@@ -233,6 +306,39 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_align(ui_ForecastIcon, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_ForecastIcon, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_ForecastIcon, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_TimeLabel = lv_label_create(ui_PanelMain);
+    lv_obj_set_width(ui_TimeLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_TimeLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_TimeLabel, 0);
+    lv_obj_set_y(ui_TimeLabel, 20);
+    lv_obj_set_align(ui_TimeLabel, LV_ALIGN_TOP_MID);
+    lv_label_set_text(ui_TimeLabel, "00:00");
+    lv_obj_set_style_text_color(ui_TimeLabel, lv_color_hex(0x01BA11), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_TimeLabel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_TimeLabel, &ui_font_monsterrat_64, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_ButtonTimer = lv_btn_create(ui_PanelMain);
+    lv_obj_set_width(ui_ButtonTimer, 75);
+    lv_obj_set_height(ui_ButtonTimer, 75);
+    lv_obj_set_x(ui_ButtonTimer, -35);
+    lv_obj_set_y(ui_ButtonTimer, -5);
+    lv_obj_set_align(ui_ButtonTimer, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_ButtonTimer, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_clear_flag(ui_ButtonTimer, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_ButtonTimer, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_ButtonTimer, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_ButtonTimer, lv_color_hex(0x01BA11), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_ButtonTimer, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_ButtonTimer, 6, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_TimerIcon = lv_img_create(ui_ButtonTimer);
+    lv_img_set_src(ui_TimerIcon, &ui_img_timer_icon_png);
+    lv_obj_set_width(ui_TimerIcon, LV_SIZE_CONTENT);   /// 80
+    lv_obj_set_height(ui_TimerIcon, LV_SIZE_CONTENT);    /// 80
+    lv_obj_set_align(ui_TimerIcon, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_TimerIcon, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_TimerIcon, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_PanelTherm = lv_obj_create(ui_Screen1);
     lv_obj_set_width(ui_PanelTherm, 480);
@@ -443,6 +549,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_width(ui_PanelForecast, 480);
     lv_obj_set_height(ui_PanelForecast, 320);
     lv_obj_set_align(ui_PanelForecast, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_PanelForecast, LV_OBJ_FLAG_HIDDEN);     /// Flags
     lv_obj_clear_flag(ui_PanelForecast, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_PanelForecast, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_PanelForecast, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -745,17 +852,194 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_style_text_opa(ui_LabelExit1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_LabelExit1, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    ui_PanelTimerPage = lv_obj_create(ui_Screen1);
+    lv_obj_set_width(ui_PanelTimerPage, 480);
+    lv_obj_set_height(ui_PanelTimerPage, 320);
+    lv_obj_set_align(ui_PanelTimerPage, LV_ALIGN_CENTER);
+    lv_obj_clear_flag(ui_PanelTimerPage, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_PanelTimerPage, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_PanelTimerPage, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_PanelTimerPage, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_left(ui_PanelTimerPage, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_right(ui_PanelTimerPage, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_top(ui_PanelTimerPage, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_bottom(ui_PanelTimerPage, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_LabelHeader1 = lv_label_create(ui_PanelTimerPage);
+    lv_obj_set_width(ui_LabelHeader1, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_LabelHeader1, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_LabelHeader1, 0);
+    lv_obj_set_y(ui_LabelHeader1, 30);
+    lv_obj_set_align(ui_LabelHeader1, LV_ALIGN_TOP_MID);
+    lv_label_set_text(ui_LabelHeader1, "TIMER");
+    lv_obj_set_style_text_color(ui_LabelHeader1, lv_color_hex(0x00FF44), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_LabelHeader1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LabelHeader1, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_PanelTimer = lv_obj_create(ui_PanelTimerPage);
+    lv_obj_set_width(ui_PanelTimer, 240);
+    lv_obj_set_height(ui_PanelTimer, 100);
+    lv_obj_set_x(ui_PanelTimer, 0);
+    lv_obj_set_y(ui_PanelTimer, -10);
+    lv_obj_set_align(ui_PanelTimer, LV_ALIGN_CENTER);
+    lv_obj_clear_flag(ui_PanelTimer, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_PanelTimer, lv_color_hex(0x1A2A1A), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_PanelTimer, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_PanelTimer, lv_color_hex(0x00FF44), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_PanelTimer, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_PanelTimer, 3, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_LabelTimerData = lv_label_create(ui_PanelTimer);
+    lv_obj_set_width(ui_LabelTimerData, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_LabelTimerData, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_LabelTimerData, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_LabelTimerData, "00:00");
+    lv_obj_set_style_text_color(ui_LabelTimerData, lv_color_hex(0x00FF44), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_LabelTimerData, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LabelTimerData, &ui_font_monsterrat_64, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_ButtonPlus = lv_btn_create(ui_PanelTimerPage);
+    lv_obj_set_width(ui_ButtonPlus, 65);
+    lv_obj_set_height(ui_ButtonPlus, 100);
+    lv_obj_set_x(ui_ButtonPlus, -165);
+    lv_obj_set_y(ui_ButtonPlus, -10);
+    lv_obj_set_align(ui_ButtonPlus, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_ButtonPlus, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_clear_flag(ui_ButtonPlus, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_ButtonPlus, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_ButtonPlus, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_ButtonPlus, lv_color_hex(0x00FF44), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_ButtonPlus, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_ButtonPlus, 3, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Panel3 = lv_obj_create(ui_ButtonPlus);
+    lv_obj_set_width(ui_Panel3, 3);
+    lv_obj_set_height(ui_Panel3, 25);
+    lv_obj_set_align(ui_Panel3, LV_ALIGN_CENTER);
+    lv_obj_clear_flag(ui_Panel3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_Panel3, lv_color_hex(0x00FF44), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Panel3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_Panel3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Panel2 = lv_obj_create(ui_ButtonPlus);
+    lv_obj_set_width(ui_Panel2, 25);
+    lv_obj_set_height(ui_Panel2, 3);
+    lv_obj_set_align(ui_Panel2, LV_ALIGN_CENTER);
+    lv_obj_clear_flag(ui_Panel2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_Panel2, lv_color_hex(0x00FF44), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Panel2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_Panel2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_ButtonMinus = lv_btn_create(ui_PanelTimerPage);
+    lv_obj_set_width(ui_ButtonMinus, 65);
+    lv_obj_set_height(ui_ButtonMinus, 100);
+    lv_obj_set_x(ui_ButtonMinus, 165);
+    lv_obj_set_y(ui_ButtonMinus, -10);
+    lv_obj_set_align(ui_ButtonMinus, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_ButtonMinus, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_clear_flag(ui_ButtonMinus, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_ButtonMinus, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_ButtonMinus, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_ButtonMinus, lv_color_hex(0x00FF44), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_ButtonMinus, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_ButtonMinus, 3, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Panel4 = lv_obj_create(ui_ButtonMinus);
+    lv_obj_set_width(ui_Panel4, 25);
+    lv_obj_set_height(ui_Panel4, 3);
+    lv_obj_set_align(ui_Panel4, LV_ALIGN_CENTER);
+    lv_obj_clear_flag(ui_Panel4, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_Panel4, lv_color_hex(0x00FF44), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Panel4, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_Panel4, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_ButtonStart = lv_btn_create(ui_PanelTimerPage);
+    lv_obj_set_width(ui_ButtonStart, 140);
+    lv_obj_set_height(ui_ButtonStart, 50);
+    lv_obj_set_x(ui_ButtonStart, -80);
+    lv_obj_set_y(ui_ButtonStart, -50);
+    lv_obj_set_align(ui_ButtonStart, LV_ALIGN_BOTTOM_MID);
+    lv_obj_add_flag(ui_ButtonStart, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_clear_flag(ui_ButtonStart, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_ButtonStart, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_ButtonStart, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_ButtonStart, lv_color_hex(0x00FF44), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_ButtonStart, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_ButtonStart, 3, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_LabelStart = lv_label_create(ui_ButtonStart);
+    lv_obj_set_width(ui_LabelStart, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_LabelStart, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_LabelStart, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_LabelStart, "S");
+    lv_obj_set_style_text_color(ui_LabelStart, lv_color_hex(0x00FF44), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_LabelStart, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LabelStart, &lv_font_montserrat_48, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_ButtonReset = lv_btn_create(ui_PanelTimerPage);
+    lv_obj_set_width(ui_ButtonReset, 140);
+    lv_obj_set_height(ui_ButtonReset, 50);
+    lv_obj_set_x(ui_ButtonReset, 80);
+    lv_obj_set_y(ui_ButtonReset, -50);
+    lv_obj_set_align(ui_ButtonReset, LV_ALIGN_BOTTOM_MID);
+    lv_obj_add_flag(ui_ButtonReset, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_clear_flag(ui_ButtonReset, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_ButtonReset, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_ButtonReset, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_ButtonReset, lv_color_hex(0x00FF44), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_ButtonReset, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_ButtonReset, 3, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_LabelReset = lv_label_create(ui_ButtonReset);
+    lv_obj_set_width(ui_LabelReset, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_LabelReset, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_LabelReset, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_LabelReset, "R");
+    lv_obj_set_style_text_color(ui_LabelReset, lv_color_hex(0x00FF44), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_LabelReset, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LabelReset, &lv_font_montserrat_48, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_ButtonExitTimer = lv_btn_create(ui_PanelTimerPage);
+    lv_obj_set_width(ui_ButtonExitTimer, 70);
+    lv_obj_set_height(ui_ButtonExitTimer, 40);
+    lv_obj_set_x(ui_ButtonExitTimer, 25);
+    lv_obj_set_y(ui_ButtonExitTimer, 10);
+    lv_obj_add_flag(ui_ButtonExitTimer, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_clear_flag(ui_ButtonExitTimer, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_ButtonExitTimer, lv_color_hex(0x0F170F), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_ButtonExitTimer, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_ButtonExitTimer, lv_color_hex(0x00FF44), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_ButtonExitTimer, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_ButtonExitTimer, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_LabelExit2 = lv_label_create(ui_ButtonExitTimer);
+    lv_obj_set_width(ui_LabelExit2, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_LabelExit2, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_LabelExit2, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_LabelExit2, "Exit");
+    lv_obj_set_style_text_color(ui_LabelExit2, lv_color_hex(0x00FF44), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_LabelExit2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LabelExit2, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
     lv_obj_add_event_cb(ui_ButtonThermomether, ui_event_ButtonThermomether, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_ButtonForecast, ui_event_ButtonForecast, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_ButtonTimer, ui_event_ButtonTimer, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Exit, ui_event_Exit, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_ButtonExit, ui_event_ButtonExit, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_ButtonPlus, ui_event_ButtonPlus, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_ButtonMinus, ui_event_ButtonMinus, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_ButtonStart, ui_event_ButtonStart, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_ButtonReset, ui_event_ButtonReset, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_ButtonExitTimer, ui_event_ButtonExitTimer, LV_EVENT_ALL, NULL);
     uic_PanelMain = ui_PanelMain;
-    uic_TimeLabel = ui_TimeLabel;
     uic_Line = ui_Line;
     uic_ButtonThermomether = ui_ButtonThermomether;
     uic_ThermometherIcon = ui_ThermometherIcon;
     uic_ButtonForecast = ui_ButtonForecast;
     uic_ForecastIcon = ui_ForecastIcon;
+    uic_TimeLabel = ui_TimeLabel;
+    uic_ButtonTimer = ui_ButtonTimer;
+    uic_TimerIcon = ui_TimerIcon;
     uic_PanelTherm = ui_PanelTherm;
     uic_PanelInternet = ui_PanelInternet;
     uic_InternetTitle = ui_InternetTitle;
@@ -795,6 +1079,16 @@ void ui_Screen1_screen_init(void)
     uic_In3DaysCloudIcon = ui_In3DaysCloudIcon;
     uic_ButtonExit = ui_ButtonExit;
     uic_LabelExit1 = ui_LabelExit1;
+    uic_PanelTimerPage = ui_PanelTimerPage;
+    uic_PanelTimer = ui_PanelTimer;
+    uic_LabelTimerData = ui_LabelTimerData;
+    uic_ButtonPlus = ui_ButtonPlus;
+    uic_ButtonMinus = ui_ButtonMinus;
+    uic_ButtonStart = ui_ButtonStart;
+    uic_LabelStart = ui_LabelStart;
+    uic_ButtonReset = ui_ButtonReset;
+    uic_LabelReset = ui_LabelReset;
+    uic_ButtonExitTimer = ui_ButtonExitTimer;
 
 }
 
@@ -806,8 +1100,6 @@ void ui_Screen1_screen_destroy(void)
     ui_Screen1 = NULL;
     uic_PanelMain = NULL;
     ui_PanelMain = NULL;
-    uic_TimeLabel = NULL;
-    ui_TimeLabel = NULL;
     uic_Line = NULL;
     ui_Line = NULL;
     uic_ButtonThermomether = NULL;
@@ -818,6 +1110,12 @@ void ui_Screen1_screen_destroy(void)
     ui_ButtonForecast = NULL;
     uic_ForecastIcon = NULL;
     ui_ForecastIcon = NULL;
+    uic_TimeLabel = NULL;
+    ui_TimeLabel = NULL;
+    uic_ButtonTimer = NULL;
+    ui_ButtonTimer = NULL;
+    uic_TimerIcon = NULL;
+    ui_TimerIcon = NULL;
     uic_PanelTherm = NULL;
     ui_PanelTherm = NULL;
     uic_PanelInternet = NULL;
@@ -902,5 +1200,30 @@ void ui_Screen1_screen_destroy(void)
     ui_ButtonExit = NULL;
     uic_LabelExit1 = NULL;
     ui_LabelExit1 = NULL;
+    uic_PanelTimerPage = NULL;
+    ui_PanelTimerPage = NULL;
+    ui_LabelHeader1 = NULL;
+    uic_PanelTimer = NULL;
+    ui_PanelTimer = NULL;
+    uic_LabelTimerData = NULL;
+    ui_LabelTimerData = NULL;
+    uic_ButtonPlus = NULL;
+    ui_ButtonPlus = NULL;
+    ui_Panel3 = NULL;
+    ui_Panel2 = NULL;
+    uic_ButtonMinus = NULL;
+    ui_ButtonMinus = NULL;
+    ui_Panel4 = NULL;
+    uic_ButtonStart = NULL;
+    ui_ButtonStart = NULL;
+    uic_LabelStart = NULL;
+    ui_LabelStart = NULL;
+    uic_ButtonReset = NULL;
+    ui_ButtonReset = NULL;
+    uic_LabelReset = NULL;
+    ui_LabelReset = NULL;
+    uic_ButtonExitTimer = NULL;
+    ui_ButtonExitTimer = NULL;
+    ui_LabelExit2 = NULL;
 
 }

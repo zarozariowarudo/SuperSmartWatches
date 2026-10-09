@@ -39,8 +39,12 @@ extern lv_obj_t * ui____initial_actions0;
 // IMAGES AND IMAGE SETS
 LV_IMG_DECLARE(ui_img_thermomether_png);    // assets/thermomether.png
 LV_IMG_DECLARE(ui_img_forecast_icon_png);    // assets/Forecast_Icon.png
+LV_IMG_DECLARE(ui_img_timer_icon_png);    // assets/Timer_Icon.png
 LV_IMG_DECLARE(ui_img_sunicon_png);    // assets/SunIcon.png
 LV_IMG_DECLARE(ui_img_cloudicon_png);    // assets/cloudIcon.png
+
+// FONTS
+LV_FONT_DECLARE(ui_font_monsterrat_64);
 
 // UI INIT
 void ui_init(void);

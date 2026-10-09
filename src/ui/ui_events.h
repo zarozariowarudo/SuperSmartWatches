@@ -10,6 +10,11 @@
 extern "C" {
 #endif
 
+void addMinute(lv_event_t * e);
+void minusMinute(lv_event_t * e);
+void startTimer(lv_event_t * e);
+void resetTimer(lv_event_t * e);
+
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

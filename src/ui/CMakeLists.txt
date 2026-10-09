@@ -2,9 +2,12 @@ SET(SOURCES ui_Screen1.c
     ui.c
     ui_comp_hook.c
     ui_helpers.c
+    ui_events.c
     ui_img_thermomether_png.c
     ui_img_forecast_icon_png.c
+    ui_img_timer_icon_png.c
     ui_img_sunicon_png.c
-    ui_img_cloudicon_png.c)
+    ui_img_cloudicon_png.c
+    fonts/ui_font_monsterrat_64.c)
 
 add_library(ui ${SOURCES})
