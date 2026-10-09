@@ -6,8 +6,13 @@ class UpgradeLabel
 {
     private:
         String previous = "";
+        lv_obj_t* label;
     public:
-        void update(const String &Ndata, lv_obj_t* label)
+        UpgradeLabel(lv_obj_t* Nlabel)
+        {
+            label = Nlabel;
+        }
+        void update(const String &Ndata)
         {
             if (!label) return;
 
